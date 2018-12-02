@@ -7,7 +7,7 @@ env = gym.make('MountainCar-v0')
 state = env.reset()
 env.render()
 
-prev = -1
+prev = state[1]
 while True:
     action = 0 if prev < 0 else 2
     state, reward, done, other = env.step(action)
