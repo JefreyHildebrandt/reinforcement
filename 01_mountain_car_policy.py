@@ -6,7 +6,6 @@ import time
 env = gym.make('MountainCar-v0')
 state = env.reset()
 env.render()
-time.sleep(0.1)
 
 prev = -1
 while True:
@@ -14,7 +13,6 @@ while True:
     state, reward, done, other = env.step(action)
     prev = state[1]
     env.render()
-    time.sleep(0.1)
     if done:
         break
 env.close()
