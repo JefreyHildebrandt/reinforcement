@@ -2,6 +2,9 @@
 
 This is a collection of simple reinforcement learning projects for my course "Introduction to Artificial Intelligence".
 
+## Taxonomy of reinforcement learning methods ##
+https://github.com/schneider128k/reinforcement/blob/master/taxonomy_rl_methods.md
+
 ## Random action agents ##
 
 * Random action agent for cart pole
@@ -30,6 +33,10 @@ Once we become more familiar with neural networks and TensorFlow, I will show ho
 The second notebook implements a convolutional neural network for recognizing hand-written digits. We need to use convolutional neural networks to approximate q-values for more advanced tasks such as playing Atari games.
 
 Note that this is going to be a very brief introduction to neural networks and TensorFlow. I am going to be teaching an entire class on deep neural networks and TensorFlow in Spring 2019.
+
+## Cross entropy method policy learning ##
+
+* Cross entropy method policy learning for cart pole
 
 ## Q-learning with shallow neural networks ##
 
