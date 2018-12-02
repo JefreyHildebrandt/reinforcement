@@ -9,7 +9,7 @@ env.render()
 time.sleep(0.1)
 
 prev = -1
-for _ in np.arange(200):
+while True:
     action = 0 if prev < 0 else 2
     state, reward, done, other = env.step(action)
     prev = state[1]
