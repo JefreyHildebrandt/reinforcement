@@ -1,25 +1,22 @@
 import gym
 import numpy as np
+import time
+import random
+import math
 
 env = gym.make("CartPole-v1")
-state = env.reset()
-env.render()
-
-episodes = 1000
-steps = 200
-
 reward_list = []
-for episode in range(1, episodes + 1):
-    env.reset()
-    total_reward = 0
-    for step in range(1, steps + 1):
-        next_state, reward, done, _ = env.step(env.action_space.sample())
-        print('Sample:')
-        print(env.action_space.sample())
-        print('Stats:')
-        print(next_state, reward, done)
-        total_reward += reward
-        if done: break
-        state = next_state
-    reward_list.append(total_reward)
+
+state = env.reset()
+total_reward = 0
+for _ in np.arange(2001):
+    cart_pos, cart_vel, pole_ang, pole_vel = state
+    total = cart_pos*-1 + cart_vel + pole_ang + pole_vel
+    action = 0 if total < 0  else 1
+    state, reward, done, _ = env.step(action)
+    total_reward += reward
+    env.render()
+    if done: 
+        print('Reward:', total_reward)
+        break
 env.close()
