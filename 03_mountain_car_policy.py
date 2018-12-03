@@ -10,12 +10,12 @@ import math
 env = gym.make('MountainCar-v0')
 
 # Environment parameters
-state_size = 2
+state_size = 3
 action_size = 3
 
 hidden_layer_size = 128
 
-batch_size = 25
+batch_size = 200
 
 learning_rate = 0.01
 
@@ -95,7 +95,8 @@ class Net:
         
         feed_dict = {
             self.states : states,
-            self.actions : actions
+            self.actions : actions,
+
         }
         
         sess.run(self.optimizer, feed_dict = feed_dict)
@@ -125,26 +126,41 @@ with tf.Session() as sess:
             total_reward = 0.0
             trajectory = []
             state = env.reset()
+            state = (state[0], state[1], 0)
             # prev_vel = 0.0
+            init_state = state
             total_reward = 0
-            total_velocity = -100
+            total_velocity = 0
+            reward = 0
+            highest_pos = -100
+            lowest_pos = 100
             for s in np.arange(max_steps):
                 action = net.get_action(state)
                 next_state, reward, done, _ = env.step(action)
-                # reward = abs((next_state[0] + 5.0) * next_state[1])
                 reward = next_state[0]
                 velocity = abs(next_state[1] * 3)
-                # if reward > total_reward:
-                #     total_reward = reward
-                if velocity > total_velocity:
-                    total_velocity = velocity
-                
-                # prev_vel = next_state[0]
-                # total_reward += reward
-                trajectory.append((state, action))
-                state = next_state
-                if done: break
-            total_reward += total_velocity
+                total_velocity += velocity
+
+                if next_state[0] > highest_pos:
+                    highest_pos = next_state[0]
+                if next_state[0] < lowest_pos:
+                    lowest_pos = next_state[0]
+
+                forward = 0
+                if next_state[1] > state[1] and next_state[1]>0 and state[1]>0:
+                    forward = 1
+                elif next_state[1] < state[1] and next_state[1]<=0 and state[1]<=0:
+                    forward = -1
+
+                trajectory.append(((state[0], state[1], forward), action))
+                state = (next_state[0], next_state[1], forward)
+                if done and s < 199: 
+                    reward += 1000 * (200-s)
+                    break
+
+            # total_reward += total_velocity
+            # total_reward = reward
+            total_reward = (abs(lowest_pos) + abs(highest_pos)) * total_velocity + reward
             index = bisect.bisect(total_reward_list, total_reward)
             total_reward_list.insert(index, total_reward)
             trajectory_list.insert(index, trajectory)
@@ -166,27 +182,43 @@ with tf.Session() as sess:
 
         # test agent
         state = env.reset()
+        state = (state[0], state[1], 0)
         env.render()
         # time.sleep(0.05)
         total_reward = 0.0
         highest_state = 0
-        total_velocity = -100
+        total_velocity = 0
+        highest_pos = -100
+        lowest_pos = 100
         for s in np.arange(max_steps):
             action = net.get_action(state)
-            state, reward, done, _ = env.step(action)
-            velocity = abs(state[1] * 3)
+            next_state, reward, done, _ = env.step(action)
+            velocity = abs(next_state[1] * 3)
             # if state[0] > highest_state:
             #     highest_state = state[0]
-            if velocity > total_velocity:
-                    total_velocity = velocity
+            # if velocity > total_velocity:
+            total_velocity += velocity
             total_reward += reward
+            if next_state[0] > highest_pos:
+                highest_pos = next_state[0]
+            if next_state[0] < lowest_pos:
+                lowest_pos = next_state[0]
+            forward = 0
+            if next_state[1] > state[1] and next_state[1]>0 and state[1]>0:
+                # reward += 15
+                forward = 1
+            elif next_state[1] < state[1] and next_state[1]<=0 and state[1]<=0:
+                # reward +=15
+                forward = -1
             # if is_passing:
             env.render()
+            state = (next_state[0], next_state[1], forward)
             # time.sleep(0.05)
             if done: break
 
         env.close()
-        print("Total reward:", total_reward, 'Count:', count, 'Highest State:', (highest_state + total_velocity))
+        h_state = (abs(lowest_pos) + abs(highest_pos)) * total_velocity
+        print("Total reward:", total_reward, 'Count:', count, 'Highest State:', h_state)
         
         if total_reward > -200:
             is_passing = True
