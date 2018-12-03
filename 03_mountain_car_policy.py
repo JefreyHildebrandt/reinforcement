@@ -126,8 +126,8 @@ with tf.Session() as sess:
             total_reward = 0.0
             trajectory = []
             state = env.reset()
+            # added additional context to the state where it knows if it was going forwards, backwards, or stayed the same relative to the previous state
             state = (state[0], state[1], 0)
-            # prev_vel = 0.0
             init_state = state
             total_reward = 0
             total_velocity = 0
@@ -138,14 +138,17 @@ with tf.Session() as sess:
                 action = net.get_action(state)
                 next_state, reward, done, _ = env.step(action)
                 reward = next_state[0]
+                # give velocity high priority
                 velocity = abs(next_state[1] * 3)
                 total_velocity += velocity
 
+                # judge position only by the max height it received
                 if next_state[0] > highest_pos:
                     highest_pos = next_state[0]
                 if next_state[0] < lowest_pos:
                     lowest_pos = next_state[0]
 
+                # give additional positional context
                 forward = 0
                 if next_state[1] > state[1] and next_state[1]>0 and state[1]>0:
                     forward = 1
@@ -154,12 +157,11 @@ with tf.Session() as sess:
 
                 trajectory.append(((state[0], state[1], forward), action))
                 state = (next_state[0], next_state[1], forward)
+
+                # give a high reward based on how fast it was cleared
                 if done and s < 199: 
                     reward += 1000 * (200-s)
                     break
-
-            # total_reward += total_velocity
-            # total_reward = reward
             total_reward = (abs(lowest_pos) + abs(highest_pos)) * total_velocity + reward
             index = bisect.bisect(total_reward_list, total_reward)
             total_reward_list.insert(index, total_reward)
@@ -183,8 +185,7 @@ with tf.Session() as sess:
         # test agent
         state = env.reset()
         state = (state[0], state[1], 0)
-        env.render()
-        # time.sleep(0.05)
+        # env.render()
         total_reward = 0.0
         highest_state = 0
         total_velocity = 0
@@ -194,9 +195,6 @@ with tf.Session() as sess:
             action = net.get_action(state)
             next_state, reward, done, _ = env.step(action)
             velocity = abs(next_state[1] * 3)
-            # if state[0] > highest_state:
-            #     highest_state = state[0]
-            # if velocity > total_velocity:
             total_velocity += velocity
             total_reward += reward
             if next_state[0] > highest_pos:
@@ -205,15 +203,11 @@ with tf.Session() as sess:
                 lowest_pos = next_state[0]
             forward = 0
             if next_state[1] > state[1] and next_state[1]>0 and state[1]>0:
-                # reward += 15
                 forward = 1
             elif next_state[1] < state[1] and next_state[1]<=0 and state[1]<=0:
-                # reward +=15
                 forward = -1
-            # if is_passing:
-            env.render()
+            # env.render()
             state = (next_state[0], next_state[1], forward)
-            # time.sleep(0.05)
             if done: break
 
         env.close()
