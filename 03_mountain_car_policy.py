@@ -126,16 +126,25 @@ with tf.Session() as sess:
             trajectory = []
             state = env.reset()
             # prev_vel = 0.0
+            total_reward = 0
+            total_velocity = -100
             for s in np.arange(max_steps):
                 action = net.get_action(state)
                 next_state, reward, done, _ = env.step(action)
-                reward = abs(next_state[0] + 0.6)
+                # reward = abs((next_state[0] + 5.0) * next_state[1])
+                reward = next_state[0]
+                velocity = abs(next_state[1] * 3)
+                # if reward > total_reward:
+                #     total_reward = reward
+                if velocity > total_velocity:
+                    total_velocity = velocity
+                
                 # prev_vel = next_state[0]
-                total_reward += reward
+                # total_reward += reward
                 trajectory.append((state, action))
                 state = next_state
                 if done: break
-
+            total_reward += total_velocity
             index = bisect.bisect(total_reward_list, total_reward)
             total_reward_list.insert(index, total_reward)
             trajectory_list.insert(index, trajectory)
@@ -157,20 +166,27 @@ with tf.Session() as sess:
 
         # test agent
         state = env.reset()
-        # env.render()
+        env.render()
         # time.sleep(0.05)
         total_reward = 0.0
+        highest_state = 0
+        total_velocity = -100
         for s in np.arange(max_steps):
             action = net.get_action(state)
             state, reward, done, _ = env.step(action)
+            velocity = abs(state[1] * 3)
+            # if state[0] > highest_state:
+            #     highest_state = state[0]
+            if velocity > total_velocity:
+                    total_velocity = velocity
             total_reward += reward
-            if is_passing:
-                env.render()
+            # if is_passing:
+            env.render()
             # time.sleep(0.05)
             if done: break
 
         env.close()
-        print("Total reward:", total_reward, ' Count:', count)
+        print("Total reward:", total_reward, 'Count:', count, 'Highest State:', (highest_state + total_velocity))
         
         if total_reward > -200:
             is_passing = True

@@ -1,12 +1,24 @@
 * Depth First Search
+    This is an algorithm that is used to traverse a tree.  It first starts at the top of a tree structure and goes down each 'branch' in order to find the desired value.  Once the tree reaches the bottom of a branch it restarts from the root and goes down the next branch.
 * Breadth First Search 
+    This is an algorithm that is used to traverse a tree.  It first starts at the bottom of the 'branches' of a tree structure and goes accross at the same depth to find the desired value.  Once the tree reaches the side it continues all the way up until it reaches the top of the tree.
 * A* Search 
+    A* search is an algorithm which is primarily used in pathfinding and graph traversal.  It's main purpose is to approximate the shortest path of a weighted graph.  It does this by blocking the bad paths and opening the good paths through every step of a node.
+* Heuristic
+    Heuristic is simply a method for finding a quick or approximate method for a more brute-force technique.  For example A* search won't always find the absolute fastest path, but it is guaranteed to at least find a fast path.  This general approximation can be referred to as a heuristic.
 * Minimax 
+    Minimax is often used in AI for either trying to get the best possible outcome for the next state, or avoiding the worst case scenario.  It does this by going through all the possible states that could happen on the next iteration and choosing the best case and worst case.  Then either chooses the best case or avoids the worst case.
 * Alpha-Beta Pruning
+    This is a faster version of Minimax.  Essentially it breaks when a state is starting to be worse than a previously examined state.  This significanty can speed up the process.
 * Expectimax
+    Expectimax is an alternate version of Minimax.  For this algorithm it does not assume that the opponent always will make the optimum move.  It has a variant of randomness, since the opponent may also do things that do not make sense.
 * Markov decision process
+    It is an algorithm that knows the optimal move for any given state.  This is often hard to do by hand, so it is a tequnique in reinforcement learning.  However, if all possible states are known and the best answer is given for every state, then this tequnique is optimal.
 * Value Iteration
-* Q-Learning
+    Value iteration is a tequnique where essentially you start at the goal and work backwards.  So, you know the end state and find the best path to get there by going one state backwards until arriving at your current position.
+* Q-Learning   
+    Q-Learning is similar to the markov decision process, however it assumes that the optimal move for each state is not known and learns it.  It does this by getting rewards as it goes.  For instance negative rewards for a bad outcome and positive rewards for a good outcome.  
 * Epsilon Greedy
-* Approximate Q-Learning
+    Epsilon greedy involves keeping track of probabilites to go down certain paths.  When certain paths give good rewards, the probability to go down that path increases.  This continues until the good and bad paths are largely taken or avoided.
 * Cross-Entropy
+    Cross-Entropy is a term used in machine learning.  A set of inputs gets linked to a set of outputs.  The desired outputs are given and each iteration the network updates itself so that a set of inputs will predict into the correct outputs.
