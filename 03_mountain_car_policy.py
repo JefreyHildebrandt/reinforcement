@@ -125,12 +125,12 @@ with tf.Session() as sess:
             total_reward = 0.0
             trajectory = []
             state = env.reset()
-            prev_vel = 0.0
+            # prev_vel = 0.0
             for s in np.arange(max_steps):
                 action = net.get_action(state)
                 next_state, reward, done, _ = env.step(action)
-                reward = abs(prev_vel-next_state[0])
-                prev_vel = next_state[0]
+                reward = abs(next_state[0] + 0.6)
+                # prev_vel = next_state[0]
                 total_reward += reward
                 trajectory.append((state, action))
                 state = next_state

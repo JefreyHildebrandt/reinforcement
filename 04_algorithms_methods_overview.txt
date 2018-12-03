@@ -1,0 +1,12 @@
+* Depth First Search
+* Breadth First Search 
+* A* Search 
+* Minimax 
+* Alpha-Beta Pruning
+* Expectimax
+* Markov decision process
+* Value Iteration
+* Q-Learning
+* Epsilon Greedy
+* Approximate Q-Learning
+* Cross-Entropy
